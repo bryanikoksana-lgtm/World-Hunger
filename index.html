@@ -1,0 +1,2725 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>🌍 Голод на планеті — інтерактивне дослідження</title>
+
+<style>
+
+/* =========================================================
+   ОСНОВНІ СТИЛІ
+========================================================= */
+
+*{
+    box-sizing:border-box;
+}
+
+html,
+body{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+    background:#06111f;
+    color:#ffffff;
+}
+
+body{
+    overflow:hidden;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+header{
+    height:82px;
+    padding:17px 30px;
+    background:rgba(4,13,25,.97);
+    border-bottom:1px solid rgba(255,255,255,.12);
+    position:relative;
+    z-index:20;
+}
+
+.logo{
+    font-size:26px;
+    font-weight:800;
+    letter-spacing:.3px;
+}
+
+.logo span{
+    color:#55e39a;
+}
+
+.subtitle{
+    margin-top:5px;
+    color:#9fb0c2;
+    font-size:14px;
+}
+
+/* =========================================================
+   ОСНОВНА СІТКА
+========================================================= */
+
+.layout{
+    display:grid;
+    grid-template-columns:
+        minmax(520px,1.55fr)
+        minmax(390px,.85fr);
+
+    height:
+        calc(100vh - 82px);
+}
+
+/* =========================================================
+   3D SPACE
+========================================================= */
+
+#space{
+    position:relative;
+    width:100%;
+    height:100%;
+
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            #173c5c 0%,
+            #0b2035 32%,
+            #040d18 72%,
+            #01050a 100%
+        );
+
+    overflow:hidden;
+}
+
+#canvas{
+    display:block;
+    width:100%;
+    height:100%;
+}
+
+/* підказка */
+
+.instructions{
+    position:absolute;
+    bottom:23px;
+    left:50%;
+
+    transform:
+        translateX(-50%);
+
+    padding:
+        11px 22px;
+
+    border-radius:
+        30px;
+
+    background:
+        rgba(0,0,0,.62);
+
+    border:
+        1px solid
+        rgba(255,255,255,.12);
+
+    color:#c8d5e2;
+
+    font-size:14px;
+
+    white-space:nowrap;
+
+    backdrop-filter:
+        blur(8px);
+}
+
+/* =========================================================
+   PANEL
+========================================================= */
+
+.panel{
+    height:100%;
+    overflow-y:auto;
+
+    padding:
+        25px;
+
+    background:
+        #0b1828;
+}
+
+.panel::-webkit-scrollbar{
+    width:8px;
+}
+
+.panel::-webkit-scrollbar-track{
+    background:#07111f;
+}
+
+.panel::-webkit-scrollbar-thumb{
+    background:#294158;
+    border-radius:20px;
+}
+
+h1{
+    margin:
+        0 0 10px;
+
+    font-size:30px;
+}
+
+h2{
+    margin-top:28px;
+}
+
+h3{
+    margin-top:0;
+}
+
+.description{
+    color:#b7c4d2;
+    line-height:1.65;
+}
+
+/* =========================================================
+   СТАТИСТИКА
+========================================================= */
+
+.stats{
+    display:grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:10px;
+
+    margin-top:20px;
+}
+
+.stat{
+    background:#12263b;
+
+    border:
+        1px solid
+        rgba(255,255,255,.08);
+
+    border-radius:15px;
+
+    padding:16px;
+}
+
+.number{
+    font-size:25px;
+
+    font-weight:800;
+
+    color:#55e39a;
+}
+
+.label{
+    margin-top:6px;
+
+    color:#9eafc0;
+
+    font-size:13px;
+
+    line-height:1.35;
+}
+
+/* =========================================================
+   FACTORS
+========================================================= */
+
+.factors{
+    display:grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:9px;
+}
+
+.factor{
+    background:#12263b;
+
+    color:white;
+
+    border:
+        1px solid
+        #294158;
+
+    border-radius:13px;
+
+    padding:13px;
+
+    text-align:left;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.factor:hover{
+    background:#193852;
+
+    transform:
+        translateY(-2px);
+}
+
+.factor.active{
+    background:#153e34;
+
+    border-color:
+        #55e39a;
+}
+
+.icon{
+    font-size:23px;
+}
+
+.name{
+    font-weight:700;
+
+    margin-top:5px;
+}
+
+.small{
+    color:#91a4b8;
+
+    font-size:12px;
+
+    margin-top:4px;
+}
+
+/* =========================================================
+   INFO CARD
+========================================================= */
+
+.info{
+    margin-top:18px;
+
+    padding:18px;
+
+    background:#12263b;
+
+    border-radius:14px;
+
+    border-left:
+        4px solid
+        #55e39a;
+}
+
+.info p{
+    color:#bdc9d5;
+
+    line-height:1.6;
+}
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+.progress{
+    height:9px;
+
+    background:#263b4e;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    margin-top:10px;
+}
+
+.progress div{
+    height:100%;
+
+    width:90%;
+
+    background:#55e39a;
+
+    border-radius:20px;
+
+    transition:
+        width .4s ease;
+}
+
+/* =========================================================
+   COUNTRY
+========================================================= */
+
+.country{
+    display:none;
+
+    border-left-color:
+        #ff5555;
+}
+
+.country-title{
+    font-size:23px;
+
+    font-weight:800;
+
+    margin-bottom:10px;
+}
+
+.country-stat{
+    display:grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:8px;
+
+    margin-top:15px;
+}
+
+.country-box{
+    background:#0d1d30;
+
+    border-radius:10px;
+
+    padding:12px;
+}
+
+.country-box strong{
+    display:block;
+
+    font-size:19px;
+
+    color:#ff7373;
+}
+
+.country-box span{
+    display:block;
+
+    color:#91a4b8;
+
+    font-size:11px;
+
+    margin-top:4px;
+}
+
+.source{
+    color:#71869a;
+
+    font-size:11px;
+
+    margin-top:15px;
+
+    line-height:1.5;
+}
+
+/* =========================================================
+   LEGEND
+========================================================= */
+
+.legend{
+    margin-top:18px;
+
+    padding:15px;
+
+    background:#101f31;
+
+    border-radius:12px;
+}
+
+.legend-title{
+    font-weight:700;
+
+    margin-bottom:10px;
+}
+
+.legend-item{
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    margin-top:7px;
+
+    color:#a9b7c5;
+
+    font-size:13px;
+}
+
+.dot{
+    width:12px;
+    height:12px;
+
+    border-radius:50%;
+
+    flex-shrink:0;
+}
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+.quiz{
+    margin-top:30px;
+}
+
+.question{
+    font-size:16px;
+
+    line-height:1.55;
+
+    color:#d1dae3;
+}
+
+.answers{
+    display:grid;
+
+    gap:8px;
+
+    margin-top:13px;
+}
+
+.answer{
+    background:#142a40;
+
+    color:white;
+
+    border:
+        1px solid
+        #294158;
+
+    border-radius:10px;
+
+    padding:12px;
+
+    text-align:left;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.answer:hover{
+    background:#1b3b58;
+}
+
+.answer:disabled{
+    cursor:default;
+}
+
+.answer.correct{
+    background:#185638;
+
+    border-color:#55e39a;
+}
+
+.answer.wrong{
+    background:#5b2b2b;
+
+    border-color:#ff7070;
+}
+
+.result{
+    margin-top:12px;
+
+    font-weight:700;
+
+    line-height:1.5;
+}
+
+.reset{
+    width:100%;
+
+    margin-top:15px;
+
+    padding:14px;
+
+    border:0;
+
+    border-radius:11px;
+
+    background:#55e39a;
+
+    color:#06111f;
+
+    font-weight:800;
+
+    cursor:pointer;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading{
+    position:absolute;
+
+    top:50%;
+    left:50%;
+
+    transform:
+        translate(-50%,-50%);
+
+    background:
+        rgba(0,0,0,.65);
+
+    padding:
+        15px 25px;
+
+    border-radius:30px;
+
+    color:#cbd8e4;
+
+    z-index:5;
+
+    transition:
+        opacity .5s;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:950px){
+
+    body{
+        overflow:auto;
+    }
+
+    .layout{
+        display:block;
+
+        height:auto;
+    }
+
+    #space{
+        height:520px;
+    }
+
+    .panel{
+        height:auto;
+
+        overflow:visible;
+    }
+
+}
+
+@media(max-width:600px){
+
+    header{
+        height:auto;
+
+        padding:15px;
+    }
+
+    .logo{
+        font-size:21px;
+    }
+
+    .subtitle{
+        font-size:12px;
+    }
+
+    .layout{
+        height:auto;
+    }
+
+    #space{
+        height:430px;
+    }
+
+    .instructions{
+        font-size:11px;
+
+        padding:
+            9px 13px;
+    }
+
+    .panel{
+        padding:18px;
+    }
+
+    .factors{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+
+
+<!-- =======================================================
+     THREE.JS
+======================================================= -->
+
+<script type="importmap">
+
+{
+    "imports":{
+
+        "three":
+        "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+
+        "three/addons/":
+        "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+
+    }
+}
+
+</script>
+
+</head>
+
+
+<body>
+
+
+<!-- =======================================================
+     HEADER
+======================================================= -->
+
+<header>
+
+    <div class="logo">
+
+        🌍
+        <span>ГОЛОД НА ПЛАНЕТІ</span>
+
+    </div>
+
+    <div class="subtitle">
+
+        Інтерактивне дослідження причин
+        продовольчої небезпеки
+
+    </div>
+
+</header>
+
+
+<!-- =======================================================
+     MAIN
+======================================================= -->
+
+<div class="layout">
+
+
+<!-- =======================================================
+     3D WORLD
+======================================================= -->
+
+<section id="space">
+
+    <canvas id="canvas"></canvas>
+
+    <div
+        class="loading"
+        id="loading">
+
+        🌍 Завантаження Землі...
+
+    </div>
+
+
+    <div class="instructions">
+
+        🖱️ Обертайте Землю
+        &nbsp;•&nbsp;
+        🔍 Колесо — масштаб
+        &nbsp;•&nbsp;
+        📍 Натисніть країну
+
+    </div>
+
+</section>
+
+
+<!-- =======================================================
+     INFORMATION PANEL
+======================================================= -->
+
+<aside class="panel">
+
+
+<h1>
+    🌍 Досліджуй планету
+</h1>
+
+
+<p class="description">
+
+    На глобусі показано країни та регіони,
+    де офіційні міжнародні оцінки фіксують
+    високий рівень <b>гострої продовольчої
+    небезпеки</b>.
+
+    <br><br>
+
+    Натискай на червоні маркери,
+    щоб дізнатися більше.
+
+</p>
+
+
+<!-- =======================================================
+     GLOBAL STATISTICS
+======================================================= -->
+
+<div class="stats">
+
+
+<div class="stat">
+
+    <div class="number">
+        645 млн
+    </div>
+
+    <div class="label">
+
+        орієнтовна кількість людей,
+        які переживали голод у світі
+        за глобальною оцінкою
+
+    </div>
+
+</div>
+
+
+<div class="stat">
+
+    <div class="number">
+        7,8%
+    </div>
+
+    <div class="label">
+
+        частка населення світу
+        за відповідною глобальною
+        оцінкою недоїдання
+
+    </div>
+
+</div>
+
+
+<div class="stat">
+
+    <div class="number">
+        2,1 млрд
+    </div>
+
+    <div class="label">
+
+        людей мали помірну або
+        тяжку продовольчу небезпеку
+
+    </div>
+
+</div>
+
+
+<div class="stat">
+
+    <div class="number">
+        2,7 млрд
+    </div>
+
+    <div class="label">
+
+        людей не могли дозволити
+        собі здорове харчування
+
+    </div>
+
+</div>
+
+
+</div>
+
+
+<!-- =======================================================
+     FACTORS
+======================================================= -->
+
+<h2>
+    🔎 Чому виникає голод?
+</h2>
+
+
+<div class="factors">
+
+
+<button
+    class="factor active"
+    onclick="showFactor('conflict',this)">
+
+    <div class="icon">⚔️</div>
+
+    <div class="name">
+        Конфлікти
+    </div>
+
+    <div class="small">
+        Війни та насильство
+    </div>
+
+</button>
+
+
+<button
+    class="factor"
+    onclick="showFactor('climate',this)">
+
+    <div class="icon">🌡️</div>
+
+    <div class="name">
+        Клімат
+    </div>
+
+    <div class="small">
+        Посухи, спека, повені
+    </div>
+
+</button>
+
+
+<button
+    class="factor"
+    onclick="showFactor('economy',this)">
+
+    <div class="icon">💰</div>
+
+    <div class="name">
+        Економіка
+    </div>
+
+    <div class="small">
+        Ціни та бідність
+    </div>
+
+</button>
+
+
+<button
+    class="factor"
+    onclick="showFactor('production',this)">
+
+    <div class="icon">🌾</div>
+
+    <div class="name">
+        Виробництво
+    </div>
+
+    <div class="small">
+        Урожай та ресурси
+    </div>
+
+</button>
+
+
+<button
+    class="factor"
+    onclick="showFactor('migration',this)">
+
+    <div class="icon">🏚️</div>
+
+    <div class="name">
+        Переміщення
+    </div>
+
+    <div class="small">
+        Втрата житла
+    </div>
+
+</button>
+
+
+<button
+    class="factor"
+    onclick="showFactor('transport',this)">
+
+    <div class="icon">🚚</div>
+
+    <div class="name">
+        Постачання
+    </div>
+
+    <div class="small">
+        Транспорт і торгівля
+    </div>
+
+</button>
+
+
+</div>
+
+
+<!-- =======================================================
+     FACTOR INFORMATION
+======================================================= -->
+
+<div class="info">
+
+
+<h3 id="factorTitle">
+
+    ⚔️ Конфлікти
+
+</h3>
+
+
+<p id="factorText">
+
+    Збройні конфлікти можуть руйнувати
+    ферми, дороги, склади, ринки та
+    іншу інфраструктуру.
+
+    Люди можуть втрачати землю,
+    роботу та доступ до продовольства.
+
+</p>
+
+
+<div class="progress">
+
+    <div
+        id="factorProgress"
+        style="width:92%;">
+
+    </div>
+
+</div>
+
+
+</div>
+
+
+<!-- =======================================================
+     COUNTRY INFORMATION
+======================================================= -->
+
+<div
+    class="info country"
+    id="country">
+
+
+<div
+    class="country-title"
+    id="countryName">
+
+    🌍 Оберіть країну
+
+</div>
+
+
+<p id="countryDescription">
+
+    Натисніть на червоний маркер
+    на глобусі.
+
+</p>
+
+
+<div class="country-stat">
+
+
+<div class="country-box">
+
+    <strong id="countryPeople">
+        —
+    </strong>
+
+    <span>
+        людей у продовольчій небезпеці
+    </span>
+
+</div>
+
+
+<div class="country-box">
+
+    <strong id="countryPercent">
+        —
+    </strong>
+
+    <span>
+        частка населення / доступний показник
+    </span>
+
+</div>
+
+
+<div class="country-box">
+
+    <strong id="countryFactor">
+        —
+    </strong>
+
+    <span>
+        основний фактор
+    </span>
+
+</div>
+
+
+<div class="country-box">
+
+    <strong id="countryPeriod">
+        —
+    </strong>
+
+    <span>
+        період оцінювання
+    </span>
+
+</div>
+
+
+</div>
+
+
+<div
+    class="source"
+    id="countrySource">
+
+</div>
+
+
+</div>
+
+
+<!-- =======================================================
+     LEGEND
+======================================================= -->
+
+<div class="legend">
+
+
+<div class="legend-title">
+
+    🗺️ Як читати карту?
+
+</div>
+
+
+<div class="legend-item">
+
+    <span
+        class="dot"
+        style="background:#ff3333">
+    </span>
+
+    Гостра продовольча небезпека
+    IPC Phase 3+
+
+</div>
+
+
+<div class="legend-item">
+
+    <span
+        class="dot"
+        style="background:#55e39a">
+    </span>
+
+    Маркер країни можна натиснути
+
+</div>
+
+
+<div class="legend-item">
+
+    👥
+
+    Кількість людей
+
+</div>
+
+
+<div class="legend-item">
+
+    ⚔️
+
+    Конфлікт
+
+</div>
+
+
+<div class="legend-item">
+
+    🌡️
+
+    Кліматичний фактор
+
+</div>
+
+
+<div class="legend-item">
+
+    💰
+
+    Економічний фактор
+
+</div>
+
+
+<div class="legend-item">
+
+    🌾
+
+    Виробництво
+
+</div>
+
+
+</div>
+
+
+<!-- =======================================================
+     QUIZ
+======================================================= -->
+
+<div class="quiz">
+
+
+<h2>
+    🎯 Мінічелендж
+</h2>
+
+
+<div class="question">
+
+    Уяви, що в країні почалася війна.
+    Який ланцюг подій може призвести
+    до погіршення продовольчої безпеки?
+
+</div>
+
+
+<div class="answers">
+
+
+<button
+    class="answer"
+    onclick="checkAnswer(this,false)">
+
+    🌴 Більше туристів →
+    більше їжі
+
+</button>
+
+
+<button
+    class="answer"
+    onclick="checkAnswer(this,true)">
+
+    ⚔️ Війна →
+    руйнування інфраструктури →
+    проблеми з виробництвом і постачанням
+
+</button>
+
+
+<button
+    class="answer"
+    onclick="checkAnswer(this,false)">
+
+    💻 Розвиток ІТ →
+    збільшення врожаю автоматично
+
+</button>
+
+
+<button
+    class="answer"
+    onclick="checkAnswer(this,false)">
+
+    🏀 Спортивні змагання →
+    дефіцит продовольства
+
+</button>
+
+
+</div>
+
+
+<div
+    class="result"
+    id="quizResult">
+
+</div>
+
+
+</div>
+
+
+<button
+    class="reset"
+    onclick="resetQuiz()">
+
+    🔄 Почати завдання знову
+
+</button>
+
+
+</aside>
+
+</div>
+
+
+<!-- =======================================================
+     THREE.JS SCRIPT
+======================================================= -->
+
+<script type="module">
+
+import * as THREE
+from "three";
+
+
+import {
+    OrbitControls
+}
+from "three/addons/controls/OrbitControls.js";
+
+
+/* =========================================================
+   CANVAS
+========================================================= */
+
+const canvas =
+    document.getElementById("canvas");
+
+const space =
+    document.getElementById("space");
+
+
+/* =========================================================
+   SCENE
+========================================================= */
+
+const scene =
+    new THREE.Scene();
+
+
+/* =========================================================
+   CAMERA
+========================================================= */
+
+const camera =
+    new THREE.PerspectiveCamera(
+        45,
+        space.clientWidth /
+        space.clientHeight,
+        0.1,
+        100
+    );
+
+camera.position.set(
+    0,
+    0,
+    3.1
+);
+
+
+/* =========================================================
+   RENDERER
+========================================================= */
+
+const renderer =
+    new THREE.WebGLRenderer({
+
+        canvas:canvas,
+
+        antialias:true,
+
+        alpha:true
+
+    });
+
+
+renderer.setPixelRatio(
+    Math.min(
+        window.devicePixelRatio,
+        2
+    )
+);
+
+
+renderer.setSize(
+    space.clientWidth,
+    space.clientHeight
+);
+
+
+/* =========================================================
+   CONTROLS
+========================================================= */
+
+const controls =
+    new OrbitControls(
+        camera,
+        renderer.domElement
+    );
+
+
+controls.enableDamping =
+    true;
+
+controls.dampingFactor =
+    0.05;
+
+controls.enablePan =
+    false;
+
+controls.minDistance =
+    1.8;
+
+controls.maxDistance =
+    5;
+
+controls.rotateSpeed =
+    0.45;
+
+
+/* =========================================================
+   LIGHT
+========================================================= */
+
+const ambientLight =
+    new THREE.AmbientLight(
+        0xffffff,
+        1.5
+    );
+
+scene.add(
+    ambientLight
+);
+
+
+const sunLight =
+    new THREE.DirectionalLight(
+        0xffffff,
+        2.5
+    );
+
+sunLight.position.set(
+    5,
+    3,
+    5
+);
+
+scene.add(
+    sunLight
+);
+
+
+/* =========================================================
+   EARTH
+========================================================= */
+
+const earthGeometry =
+    new THREE.SphereGeometry(
+        1,
+        96,
+        96
+    );
+
+
+const loader =
+    new THREE.TextureLoader();
+
+
+const earthTexture =
+    loader.load(
+
+        "https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg",
+
+        function(){
+
+            document
+                .getElementById("loading")
+                .style.opacity="0";
+
+        },
+
+        undefined,
+
+        function(){
+
+            document
+                .getElementById("loading")
+                .textContent =
+                "⚠️ Не вдалося завантажити текстуру Землі";
+
+        }
+
+    );
+
+
+const earthNormal =
+    loader.load(
+        "https://threejs.org/examples/textures/planets/earth_normal_2048.jpg"
+    );
+
+
+const earthMaterial =
+    new THREE.MeshPhongMaterial({
+
+        map:earthTexture,
+
+        normalMap:earthNormal,
+
+        shininess:12
+
+    });
+
+
+const earth =
+    new THREE.Mesh(
+        earthGeometry,
+        earthMaterial
+    );
+
+
+scene.add(
+    earth
+);
+
+
+/* =========================================================
+   ATMOSPHERE
+========================================================= */
+
+const atmosphere =
+    new THREE.Mesh(
+
+        new THREE.SphereGeometry(
+            1.045,
+            64,
+            64
+        ),
+
+        new THREE.MeshBasicMaterial({
+
+            color:0x55aaff,
+
+            transparent:true,
+
+            opacity:.14,
+
+            side:THREE.BackSide
+
+        })
+
+    );
+
+
+scene.add(
+    atmosphere
+);
+
+
+/* =========================================================
+   STARS
+========================================================= */
+
+const starGeometry =
+    new THREE.BufferGeometry();
+
+
+const starPositions=[];
+
+
+for(
+    let i=0;
+    i<2200;
+    i++
+){
+
+    starPositions.push(
+
+        (Math.random()-.5)*35,
+
+        (Math.random()-.5)*35,
+
+        (Math.random()-.5)*35
+
+    );
+
+}
+
+
+starGeometry.setAttribute(
+
+    "position",
+
+    new THREE.Float32BufferAttribute(
+        starPositions,
+        3
+    )
+
+);
+
+
+const stars =
+    new THREE.Points(
+
+        starGeometry,
+
+        new THREE.PointsMaterial({
+
+            color:0xffffff,
+
+            size:.025,
+
+            transparent:true,
+
+            opacity:.8
+
+        })
+
+    );
+
+
+scene.add(
+    stars
+);
+
+
+/* =========================================================
+   COUNTRY DATA
+========================================================= */
+
+/*
+    УВАГА:
+
+    Ці значення демонструють показники
+    гострої продовольчої небезпеки
+    IPC Phase 3+ за конкретні періоди.
+
+    Вони НЕ означають, що все населення
+    країни голодує.
+*/
+
+const locations = [
+
+
+/* ---------------------------------------------------------
+   СУДАН
+--------------------------------------------------------- */
+
+{
+
+    name:"🇸🇩 СУДАН",
+
+    lat:15,
+
+    lon:30,
+
+    people:"19,5 млн",
+
+    percent:"понад 40%",
+
+    factor:"⚔️ конфлікт",
+
+    period:"лютий–травень 2026",
+
+    description:
+
+        "Близько 19,5 млн людей прогнозувалися в IPC Phase 3 (Crisis) або вище. Серед основних факторів — збройний конфлікт, переміщення населення та порушення виробництва і постачання продовольства.",
+
+    source:
+        "FAO GIEWS / IPC"
+},
+
+
+/* ---------------------------------------------------------
+   ПІВДЕННИЙ СУДАН
+--------------------------------------------------------- */
+
+{
+
+    name:"🇸🇸 ПІВДЕННИЙ СУДАН",
+
+    lat:7,
+
+    lon:30,
+
+    people:"7,8 млн",
+
+    percent:"55%",
+
+    factor:"⚔️ конфлікт + 🌊 повені",
+
+    period:"квітень–липень 2026",
+
+    description:
+
+        "Близько 7,8 млн людей прогнозувалися в IPC Phase 3 або вище. Серед факторів — конфлікт, економічні труднощі та локальні втрати засобів до існування через повені.",
+
+    source:
+        "FAO GIEWS / IPC"
+},
+
+
+/* ---------------------------------------------------------
+   СОМАЛІ
+--------------------------------------------------------- */
+
+{
+
+    name:"🇸🇴 СОМАЛІ",
+
+    lat:5,
+
+    lon:46,
+
+    people:"≈6 млн",
+
+    percent:"≈30%",
+
+    factor:"🌡️ посуха",
+
+    period:"квітень–червень 2026",
+
+    description:
+
+        "Близько 6 млн людей оцінювалися як такі, що перебувають у IPC Phase 3 або вище. Важливими факторами стали посухи, високі ціни на їжу та нестабільність.",
+
+    source:
+        "FAO GIEWS / IPC"
+},
+
+
+/* ---------------------------------------------------------
+   ЄМЕН
+--------------------------------------------------------- */
+
+{
+
+    name:"🇾🇪 ЄМЕН",
+
+    lat:15,
+
+    lon:48,
+
+    people:"18,3 млн",
+
+    percent:"—",
+
+    factor:"⚔️ конфлікт",
+
+    period:"вересень 2025 – лютий 2026",
+
+    description:
+
+        "Близько 18,3 млн людей прогнозувалися в IPC Phase 3 або вище. Серед них значна кількість людей перебувала у важчих фазах продовольчої небезпеки.",
+
+    source:
+        "FAO GIEWS / IPC"
+},
+
+
+/* ---------------------------------------------------------
+   АФГАНІСТАН
+--------------------------------------------------------- */
+
+{
+
+    name:"🇦🇫 АФГАНІСТАН",
+
+    lat:33,
+
+    lon:66,
+
+    people:"13,8 млн",
+
+    percent:"28%",
+
+    factor:"💰 економіка",
+
+    period:"квітень–вересень 2026",
+
+    description:
+
+        "Близько 13,8 млн людей прогнозувалися в IPC Phase 3 або вище. Серед факторів — економічні труднощі, безробіття, високі ціни та скорочення гуманітарної допомоги.",
+
+    source:
+        "FAO GIEWS / IPC"
+},
+
+
+/* ---------------------------------------------------------
+   ДР КОНГО
+--------------------------------------------------------- */
+
+{
+
+    name:"🇨🇩 ДР КОНГО",
+
+    lat:-2,
+
+    lon:23,
+
+    people:"26,5 млн",
+
+    percent:"23%",
+
+    factor:"⚔️ конфлікт",
+
+    period:"січень–червень 2026",
+
+    description:
+
+        "Близько 26,5 млн людей прогнозувалися в IPC Phase 3 або вище. Значний вплив мають конфлікт, переміщення населення та високі ціни на основні продукти.",
+
+    source:
+        "FAO GIEWS / IPC"
+},
+
+
+/* ---------------------------------------------------------
+   ГАЇТІ
+--------------------------------------------------------- */
+
+{
+
+    name:"🇭🇹 ГАЇТІ",
+
+    lat:19,
+
+    lon:-72,
+
+    people:"5,8 млн",
+
+    percent:"52%",
+
+    factor:"⚔️ насильство",
+
+    period:"березень–червень 2026",
+
+    description:
+
+        "Близько 5,8 млн людей оцінювалися як такі, що мають високий рівень гострої продовольчої небезпеки.",
+
+    source:
+        "FAO GIEWS / IPC"
+},
+
+
+/* ---------------------------------------------------------
+   М'ЯНМА
+--------------------------------------------------------- */
+
+{
+
+    name:"🇲🇲 М'ЯНМА",
+
+    lat:20,
+
+    lon:96,
+
+    people:"12,4 млн",
+
+    percent:"23%",
+
+    factor:"⚔️ конфлікт",
+
+    period:"червень–серпень 2026",
+
+    description:
+
+        "Близько 12,4 млн людей прогнозувалися в IPC Phase 3 або вище. Основні фактори — конфлікт, економічні труднощі та високі ціни.",
+
+    source:
+        "FAO GIEWS / IPC"
+},
+
+
+/* ---------------------------------------------------------
+   ПАКИСТАН
+--------------------------------------------------------- */
+
+{
+
+    name:"🇵🇰 ПАКИСТАН",
+
+    lat:30,
+
+    lon:70,
+
+    people:"6,7 млн",
+
+    percent:"—",
+
+    factor:"💰 ціни + 🌊 повені",
+
+    period:"квітень–вересень 2026",
+
+    description:
+
+        "Близько 6,7 млн людей прогнозувалися в IPC Phase 3 або вище. Серед факторів — високі ціни та наслідки екстремальних погодних явищ.",
+
+    source:
+        "FAO GIEWS / IPC"
+},
+
+
+/* ---------------------------------------------------------
+   ЦАР
+--------------------------------------------------------- */
+
+{
+
+    name:"🇨🇫 ЦАР",
+
+    lat:6,
+
+    lon:21,
+
+    people:"≈2 млн",
+
+    percent:"≈33%",
+
+    factor:"⚔️ конфлікт",
+
+    period:"квітень–серпень 2026",
+
+    description:
+
+        "Близько 2 млн людей оцінювалися в IPC Phase 3 або вище. Ситуацію погіршують конфлікт, переміщення населення та високі ціни.",
+
+    source:
+        "FAO GIEWS / IPC"
+},
+
+
+/* ---------------------------------------------------------
+   УКРАЇНА
+--------------------------------------------------------- */
+
+{
+
+    name:"🇺🇦 УКРАЇНА",
+
+    lat:49,
+
+    lon:32,
+
+    people:"—",
+
+    percent:"—",
+
+    factor:"⚔️ війна",
+
+    period:"2026",
+
+    description:
+
+        "Війна впливає на сільське господарство, логістику, інфраструктуру та доступ населення до продовольства. Дані про гуманітарні потреби не слід ототожнювати з кількістю людей, які голодують.",
+
+    source:
+        "OCHA / FAO GIEWS"
+
+}
+
+];
+
+
+/* =========================================================
+   COORDINATES
+========================================================= */
+
+function latLonToVector3(
+    lat,
+    lon,
+    radius
+){
+
+    const phi =
+        (90-lat)
+        *Math.PI/180;
+
+    const theta =
+        (lon+180)
+        *Math.PI/180;
+
+
+    return new THREE.Vector3(
+
+        -radius *
+        Math.sin(phi) *
+        Math.cos(theta),
+
+        radius *
+        Math.cos(phi),
+
+        radius *
+        Math.sin(phi) *
+        Math.sin(theta)
+
+    );
+
+}
+
+
+/* =========================================================
+   MARKERS
+========================================================= */
+
+const markers=[];
+
+
+/* =========================================================
+   LABELS
+========================================================= */
+
+function createLabel(
+    location
+){
+
+    const labelCanvas =
+        document.createElement(
+            "canvas"
+        );
+
+
+    labelCanvas.width =
+        700;
+
+    labelCanvas.height =
+        220;
+
+
+    const ctx =
+        labelCanvas.getContext(
+            "2d"
+        );
+
+
+    /* фон */
+
+    ctx.fillStyle =
+        "rgba(4,13,25,.93)";
+
+
+    ctx.beginPath();
+
+    ctx.roundRect(
+        8,
+        8,
+        684,
+        204,
+        25
+    );
+
+    ctx.fill();
+
+
+    /* рамка */
+
+    ctx.strokeStyle =
+        "#ff5555";
+
+    ctx.lineWidth =
+        5;
+
+    ctx.stroke();
+
+
+    /* країна */
+
+    ctx.textAlign =
+        "center";
+
+    ctx.font =
+        "bold 42px Arial";
+
+    ctx.fillStyle =
+        "#ffffff";
+
+
+    ctx.fillText(
+
+        location.name,
+
+        350,
+
+        55
+
+    );
+
+
+    /* кількість */
+
+    ctx.font =
+        "bold 38px Arial";
+
+    ctx.fillStyle =
+        "#ff6565";
+
+
+    ctx.fillText(
+
+        "👥 " +
+        location.people,
+
+        350,
+
+        105
+
+    );
+
+
+    /* фактор */
+
+    ctx.font =
+        "24px Arial";
+
+    ctx.fillStyle =
+        "#ffd166";
+
+
+    ctx.fillText(
+
+        location.factor,
+
+        350,
+
+        145
+
+    );
+
+
+    /* період */
+
+    ctx.font =
+        "20px Arial";
+
+    ctx.fillStyle =
+        "#aebdcb";
+
+
+    ctx.fillText(
+
+        location.period,
+
+        350,
+
+        183
+
+    );
+
+
+    const texture =
+        new THREE.CanvasTexture(
+            labelCanvas
+        );
+
+
+    texture.minFilter =
+        THREE.LinearFilter;
+
+
+    const material =
+        new THREE.SpriteMaterial({
+
+            map:texture,
+
+            transparent:true,
+
+            depthTest:false
+
+        });
+
+
+    const sprite =
+        new THREE.Sprite(
+            material
+        );
+
+
+    sprite.scale.set(
+        .72,
+        .225,
+        1
+    );
+
+
+    sprite.position.copy(
+
+        latLonToVector3(
+
+            location.lat,
+
+            location.lon,
+
+            1.18
+
+        )
+
+    );
+
+
+    sprite.userData =
+        location;
+
+
+    scene.add(
+        sprite
+    );
+
+
+    return sprite;
+
+}
+
+
+/* =========================================================
+   CREATE MARKERS + LABELS
+========================================================= */
+
+locations.forEach(
+
+    location=>{
+
+        /* marker */
+
+        const geometry =
+            new THREE.SphereGeometry(
+                .043,
+                20,
+                20
+            );
+
+
+        const material =
+            new THREE.MeshBasicMaterial({
+
+                color:
+                    0xff3333
+
+            });
+
+
+        const marker =
+            new THREE.Mesh(
+
+                geometry,
+
+                material
+
+            );
+
+
+        marker.position.copy(
+
+            latLonToVector3(
+
+                location.lat,
+
+                location.lon,
+
+                1.035
+
+            )
+
+        );
+
+
+        marker.userData =
+            location;
+
+
+        scene.add(
+            marker
+        );
+
+
+        markers.push(
+            marker
+        );
+
+
+        /* label */
+
+        createLabel(
+            location
+        );
+
+    }
+
+);
+
+
+/* =========================================================
+   RAYCASTING
+========================================================= */
+
+const raycaster =
+    new THREE.Raycaster();
+
+
+const mouse =
+    new THREE.Vector2();
+
+
+renderer.domElement.addEventListener(
+
+    "click",
+
+    event=>{
+
+        const rect =
+            renderer.domElement
+                .getBoundingClientRect();
+
+
+        mouse.x =
+            ((event.clientX -
+                rect.left) /
+                rect.width)
+            *2-1;
+
+
+        mouse.y =
+            -((event.clientY -
+                rect.top) /
+                rect.height)
+            *2+1;
+
+
+        raycaster.setFromCamera(
+
+            mouse,
+
+            camera
+
+        );
+
+
+        const hits =
+            raycaster.intersectObjects(
+                markers
+            );
+
+
+        if(
+            hits.length>0
+        ){
+
+            showCountry(
+                hits[0]
+                    .object
+                    .userData
+            );
+
+        }
+
+    }
+
+);
+
+
+/* =========================================================
+   SHOW COUNTRY
+========================================================= */
+
+function showCountry(
+    data
+){
+
+    const card =
+        document.getElementById(
+            "country"
+        );
+
+
+    card.style.display =
+        "block";
+
+
+    document.getElementById(
+        "countryName"
+    ).textContent =
+        data.name;
+
+
+    document.getElementById(
+        "countryPeople"
+    ).textContent =
+        data.people;
+
+
+    document.getElementById(
+        "countryPercent"
+    ).textContent =
+        data.percent;
+
+
+    document.getElementById(
+        "countryFactor"
+    ).textContent =
+        data.factor;
+
+
+    document.getElementById(
+        "countryPeriod"
+    ).textContent =
+        data.period;
+
+
+    document.getElementById(
+        "countryDescription"
+    ).textContent =
+        data.description;
+
+
+    document.getElementById(
+        "countrySource"
+    ).innerHTML =
+
+        "<b>Джерело:</b> " +
+        data.source +
+        "<br><br>" +
+
+        "⚠️ Показник стосується " +
+        "конкретного періоду оцінювання " +
+        "та не означає, що все населення " +
+        "країни голодує.";
+
+
+    card.scrollIntoView({
+
+        behavior:"smooth",
+
+        block:"center"
+
+    });
+
+}
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+function animate(){
+
+    requestAnimationFrame(
+        animate
+    );
+
+
+    controls.update();
+
+
+    /* дуже повільне обертання зірок */
+
+    stars.rotation.y +=
+        0.00015;
+
+
+    renderer.render(
+        scene,
+        camera
+    );
+
+}
+
+
+animate();
+
+
+/* =========================================================
+   RESIZE
+========================================================= */
+
+function resize(){
+
+    const width =
+        space.clientWidth;
+
+    const height =
+        space.clientHeight;
+
+
+    camera.aspect =
+        width/height;
+
+
+    camera.updateProjectionMatrix();
+
+
+    renderer.setSize(
+        width,
+        height,
+        false
+    );
+
+}
+
+
+window.addEventListener(
+    "resize",
+    resize
+);
+
+
+resize();
+
+
+</script>
+
+
+<!-- =======================================================
+     FACTORS + QUIZ
+======================================================= -->
+
+<script>
+
+/* =========================================================
+   FACTOR DATA
+========================================================= */
+
+const factors={
+
+
+conflict:{
+
+    title:"⚔️ Конфлікти",
+
+    text:
+
+        "Збройні конфлікти можуть руйнувати ферми, дороги, склади, ринки та іншу інфраструктуру. Люди можуть втрачати землю, роботу та доступ до продовольства.",
+
+    value:"92%"
+
+},
+
+
+climate:{
+
+    title:"🌡️ Кліматичні ризики",
+
+    text:
+
+        "Посухи, повені, спека та інші екстремальні явища можуть зменшувати врожаї, доступність води та продуктивність сільського господарства.",
+
+    value:"78%"
+
+},
+
+
+economy:{
+
+    title:"💰 Економічні труднощі",
+
+    text:
+
+        "Інфляція, безробіття та падіння доходів можуть зробити продукти харчування недоступними для частини населення.",
+
+    value:"72%"
+
+},
+
+
+production:{
+
+    title:"🌾 Виробництво",
+
+    text:
+
+        "Низька врожайність, деградація земель, нестача води та втрата сільськогосподарських ресурсів можуть скорочувати виробництво їжі.",
+
+    value:"67%"
+
+},
+
+
+migration:{
+
+    title:"🏚️ Вимушене переміщення",
+
+    text:
+
+        "Переміщені люди можуть втрачати житло, землю, роботу та звичні джерела доходу, що погіршує доступ до харчування.",
+
+    value:"76%"
+
+},
+
+
+transport:{
+
+    title:"🚚 Постачання",
+
+    text:
+
+        "Пошкодження доріг, портів, складів і торговельних маршрутів може перешкоджати доставці продовольства до людей.",
+
+    value:"64%"
+
+}
+
+};
+
+
+/* =========================================================
+   SHOW FACTOR
+========================================================= */
+
+function showFactor(
+    type,
+    button
+){
+
+    document
+        .querySelectorAll(
+            ".factor"
+        )
+        .forEach(
+            element=>
+                element
+                    .classList
+                    .remove(
+                        "active"
+                    )
+        );
+
+
+    button.classList.add(
+        "active"
+    );
+
+
+    const data =
+        factors[type];
+
+
+    document.getElementById(
+        "factorTitle"
+    ).textContent =
+        data.title;
+
+
+    document.getElementById(
+        "factorText"
+    ).textContent =
+        data.text;
+
+
+    document.getElementById(
+        "factorProgress"
+    ).style.width =
+        data.value;
+
+}
+
+
+/* =========================================================
+   QUIZ
+========================================================= */
+
+function checkAnswer(
+    button,
+    correct
+){
+
+    document
+        .querySelectorAll(
+            ".answer"
+        )
+        .forEach(
+            element=>
+                element.disabled=true
+        );
+
+
+    const result =
+        document.getElementById(
+            "quizResult"
+        );
+
+
+    if(correct){
+
+        button.classList.add(
+            "correct"
+        );
+
+
+        result.textContent =
+
+            "✅ Правильно! " +
+            "Війна може зруйнувати " +
+            "виробництво, транспорт " +
+            "і доступ до продовольства.";
+
+
+        result.style.color =
+            "#55e39a";
+
+    }
+
+    else{
+
+        button.classList.add(
+            "wrong"
+        );
+
+
+        result.textContent =
+
+            "❌ Подумай ще раз. " +
+            "Який фактор може безпосередньо " +
+            "зруйнувати ферми, дороги, " +
+            "склади та інфраструктуру?";
+
+
+        result.style.color =
+            "#ff7070";
+
+    }
+
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+function resetQuiz(){
+
+    document
+        .querySelectorAll(
+            ".answer"
+        )
+        .forEach(
+            button=>{
+
+                button.disabled=false;
+
+                button.classList.remove(
+                    "correct",
+                    "wrong"
+                );
+
+            }
+        );
+
+
+    document.getElementById(
+        "quizResult"
+    ).textContent="";
+
+}
+
+</script>
+
+
+</body>
+</html>
